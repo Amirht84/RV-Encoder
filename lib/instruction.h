@@ -1,6 +1,9 @@
 #ifndef __INSTRUCTION__
 #define __INSTRUCTION__
 
+#include <string>
+#include "encoder.h"
+
 class instruction {
 	public:
 		virtual void encode (encoder&) = 0;
