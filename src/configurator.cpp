@@ -1,14 +1,40 @@
 #include "configurator.h"
-#include <stringstream>
+#include <sstream>
+#include <fstream>
 
-static std::string omit_crlf(const std::string& input){
+std::map<std::string, instructionInfo> configurator::InstMap;
+std::map<std::string, std::string> configurator::RegMap;
+
+void configurator::skip_bom(std::ifstream& file){
+	if(!file.is_open()){
+		return;
+	}
+
+	std::streampos original_pos = file.tellg();
+
+	char Bom[3];
+	file.read(Bom, 3);
+	bool hasBom = false;
+	if(file.gcount() == 3){
+		hasBom = (static_cast<unsigned char>(Bom[0]) == 0xEF)
+			&& (static_cast<unsigned char>(Bom[1]) == 0xBB)
+			&& (static_cast<unsigned char>(Bom[2]) == 0xBF);
+	}
+	if(!hasBom){
+		file.clear();
+		file.seekg(original_pos);
+	}
+	return;
+}
+
+std::string configurator::omit_crlf(const std::string& input){
 	if(!input.empty() && input.back() == '\r'){
 		return input.substr(0, input.size() - 1);
 	}
 	return input;
 }
 
-static std::vector<std::string> parse_line(std::string line){
+std::vector<std::string> configurator::parse_line(std::string line){
 	std::vector<std::string> row;
 	std::stringstream ss(line);
 	std::string cell;
@@ -17,7 +43,7 @@ static std::vector<std::string> parse_line(std::string line){
 	}
 	return row;
 }
-static bool is_opcode_table_header(const std::vector<std::string>& Header){
+bool configurator::is_opcode_table_header(const std::vector<std::string>& Header){
 	if(Header.size() != 5){
 		return false;
 	}
@@ -38,7 +64,7 @@ static bool is_opcode_table_header(const std::vector<std::string>& Header){
 	}
 	return true;
 }
-static bool is_register_table_header(const std::vector<std::string>& Header){
+bool configurator::is_register_table_header(const std::vector<std::string>& Header){
 	if(Header.size() != 2){
 		return false;
 	}
@@ -50,7 +76,7 @@ static bool is_register_table_header(const std::vector<std::string>& Header){
 	}
 	return true;
 }
-static type encoder::get_type(const std::string& Type){
+type configurator::get_type(const std::string& Type){
 	if(Type == "R"){
 		return R;
 	}
@@ -71,44 +97,46 @@ static type encoder::get_type(const std::string& Type){
 	}
 	throw std::runtime_error("unknown type in instruction table");
 }
-static void configurator::configure_instruction(const std::string& fileName){
-	std::ifstream file(fileName);
+void configurator::configure_instruction(const std::string& fileName){
+	std::ifstream file(fileName, std::ios::binary);
 	std::string line;
 
 	if(!file.is_open()){
 		throw std::runtime_error("can't open file " + fileName);
 	}
+	skip_bom(file);
+
 
 	getline(file, line);
 	line = omit_crlf(line);
 	auto Header = parse_line(line);
 	if(!is_opcode_table_header(Header)){
+
 		throw std::runtime_error("not a valid format for opcode_table");
 	}
 	while(getline(file, line)){
 		line = omit_crlf(line);
 		auto row = parse_line(line);// such Type, Ins, op, func3, func7
-		for(int i = 0 ; i < 3 ; ++i){
-			if(row[i] == ""){
-				throw std::runtime_error("unexpected empty cell in instruction table");
-			}
+		if(row.size() < 3){
+			throw std::runtime_error("unexpected empty cell in instruction table");
 		}
 		auto Type = get_type(row[0]);
 		auto& inst = row[1];
 		auto op = stoi(row[2]);
-		auto func3 = (row[3] != "") ? stoi(row[3]) : -1;
-		auto func7 = (row[4] != "") ? stoi(row[4]) : -1;
+		auto func3 = (row.size() < 4 || row[3].empty()) ? -1 : stoi(row[3]);
+		auto func7 = (row.size() < 5 || row[4].empty()) ? -1 : stoi(row[4]);
 		InstMap.insert({inst, {op, func3, func7, Type}});
 	}
 	return;
 }
-static void configurator::configure_register(const std::string& fileName){
-	std::ifstream file(fileName);
+void configurator::configure_register(const std::string& fileName){
+	std::ifstream file(fileName, std::ios::binary);
 	std::string line;
 	
 	if(!file.is_open()){
 		throw std::runtime_error("can't open file " + fileName);
 	}
+	skip_bom(file);
 
 	getline(file, line);
 	line = omit_crlf(line);
@@ -119,7 +147,7 @@ static void configurator::configure_register(const std::string& fileName){
 	while(getline(file, line)){
 		line = omit_crlf(line);
 		auto row = parse_line(line); //such Name, Number; i.g zero, x0
-		if(row[0].empty() || row[1].empty()){
+		if(row.size() < 2){
 			throw std::runtime_error("unexpected empty cell in register_table");
 		}
 		if(row[1][0] != 'x'){
@@ -133,27 +161,27 @@ static void configurator::configure_register(const std::string& fileName){
 }
 
 
-static std::array<int, 3> get_opcode(const std::string& inst) const {
+std::array<int, 3> configurator::get_opcode(const std::string& inst) {
 	if(InstMap.find(inst) == InstMap.end()){
 		throw std::runtime_error("syntax error or instruction not available in configuration file");
 	}
 	auto& [op, func3, func7, Type] = InstMap[inst];
 	return {op, func3, func7};
 }
-static type get_type(const std::string inst) const {
+type configurator::get_instruction_type(const std::string& inst) {
 	if(InstMap.find(inst) == InstMap.end()){
 		throw std::runtime_error("syntax error or instruction not available in configuration file");
 	}
 	auto [op, func3, func7, Type] = InstMap[inst];
 	return Type;
 }
-static std::string get_register_number(const std::string& reg) const {
+std::string configurator::get_register_number(const std::string& reg) {
 	if(RegMap.find(reg) == RegMap.end()){
 		throw std::runtime_error("syntax error, not a valid register name");
 	}
 	return RegMap[reg];
 }
-static bool is_register(const std::string& reg) const {
+bool configurator::is_reg(const std::string& reg) {
 	if(reg[0] == 'x'){
 		for(int i = 1; i < reg.size() ; ++i){
 			if(!isdigit(reg[i])){
@@ -167,4 +195,3 @@ static bool is_register(const std::string& reg) const {
 	}
 	return false;
 }
-

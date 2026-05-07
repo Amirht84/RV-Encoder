@@ -15,7 +15,7 @@ std::pair<std::string, std::string> seperate_offset_basereg_token(const std::str
 	std::string baseReg = token.substr(startBase + 1, token.size() - startBase - 2);
 	return {baseReg, offset};
 }
-
+#include <iostream>
 std::vector<std::string> instructionFactory::tokenate(std::string line){
 	std::vector<std::string> tokens;
 	std::string token;
@@ -29,24 +29,27 @@ std::vector<std::string> instructionFactory::tokenate(std::string line){
 				auto [baseReg, offset] = seperate_offset_basereg_token(token);
 				tokens.push_back(baseReg);
 				tokens.push_back(offset);
+			}else{
+				tokens.push_back( token );
 			}
-			tokens.push_back( token );
-
 		}
 	}
-
+	for(int i = 0 ; i < tokens.size() ; ++i){
+		std::cerr << tokens[i] << "|";
+	}
+	std::cerr << '\n';
 	if(tokens.size() > 4) throw std::runtime_error("each instruction must contain at most 4 tokens");
 	return tokens;
 }
 
 bool instructionFactory::is_hex(const std::string& input){
-	int startInd = (num[0] == '-') ? 1 : 0;
-	if(num.susbstr(startInd, 2) == "0x" || num.substr(0, 2) == "0X"){
-		if(startInd + 2 == num.size()){
+	int startInd = (input[0] == '-') ? 1 : 0;
+	if(input.substr(startInd, 2) == "0x" || input.substr(0, 2) == "0X"){
+		if(startInd + 2 == input.size()){
 			return false;
 		}
-		for(int i = startInd + 2 ; i < num.size() ; ++i){
-			if(!isxdigit(num[i])){
+		for(int i = startInd + 2 ; i < input.size() ; ++i){
+			if(!isxdigit(input[i])){
 				return false;
 			}
 		}
@@ -56,9 +59,9 @@ bool instructionFactory::is_hex(const std::string& input){
 }
 
 bool instructionFactory::is_dec(const std::string& input){
-	int startInd = (num[0] == '-') ? 1 : 0;
+	int startInd = (input[0] == '-') ? 1 : 0;
 	for(int i = startInd ; i < input.size() ; ++i){
-		if(!isdigit(num[i])){
+		if(!isdigit(input[i])){
 			return false;
 		}
 	}
@@ -77,12 +80,12 @@ template<int B>
 bool instructionFactory::is_overflow(const std::string& input){
 	int num = string_to_int(input);
 	auto stringedBit = std::bitset<B + 1>(num).to_string();
-	return stringedBit[0] != strinژgedBit[1];
+	return stringedBit[0] != stringedBit[1];
 }
 
 bool instructionFactory::is_offset_basereg_token(const std::string& token){
 	size_t startBasePos = token.find('(');
-	size_t endBasePos = token.fine(')');
+	size_t endBasePos = token.find(')');
 	if( startBasePos == std::string::npos || endBasePos == std::string::npos ){
 		return false;
 	}
@@ -100,7 +103,7 @@ bool instructionFactory::is_format_r(const std::vector<std::string>& tokens){
 		return false;
 	}
 	for(int i = 1 ; i < 4; ++i){
-		if(!configurator.is_reg(tokens[i])) return false;
+		if(!configurator::is_reg(tokens[i])) return false;
 	}
 	return true;
 }
@@ -109,7 +112,7 @@ bool instructionFactory::is_format_i(const std::vector<std::string>& tokens){
 		return false;
 	}
 	for(int i = 1 ; i < 3 ; ++i){
-		if(!configurator.is_reg(tokens[i])) return false;
+		if(!configurator::is_reg(tokens[i])) return false;
 	}
 	if(!is_num(tokens[3])){
 		return false;
@@ -124,7 +127,7 @@ bool instructionFactory::is_format_s(const std::vector<std::string>& tokens){
 		return false;
 	}
 	for(int i = 1 ; i < 3 ; ++i){
-		if(!configurator.is_reg(tokens[i])){
+		if(!configurator::is_reg(tokens[i])){
 			return false;
 		}
 	}
@@ -140,8 +143,8 @@ bool instructionFactory::is_format_b(const std::vector<std::string>& tokens){
 	if(tokens.size() != 4){
 		return false;
 	}
-	for(inst i = 1 ;i < 3 ; ++i){
-		if(!configurator.is_reg(tokens[i])){
+	for(int i = 1 ;i < 3 ; ++i){
+		if(!configurator::is_reg(tokens[i])){
 			return false;
 		}
 	}
@@ -155,9 +158,9 @@ bool instructionFactory::is_format_b(const std::vector<std::string>& tokens){
 }
 bool instructionFactory::is_format_u(const std::vector<std::string>& tokens){
 	if(tokens.size() != 3){
-		return false
+		return false;
 	}
-	if(!configurator.is_reg(tokens[1])){
+	if(!configurator::is_reg(tokens[1])){
 		return false;
 	}
 	if(!is_num(tokens[2])){
@@ -172,7 +175,7 @@ bool instructionFactory::is_format_j(const std::vector<std::string>& tokens){
 	if(tokens.size() != 3){
 		return false;
 	}
-	if(!configurator.is_reg(tokens[1])){
+	if(!configurator::is_reg(tokens[1])){
 		return false;
 	}
 	if(!is_num(tokens[2])){
@@ -186,7 +189,7 @@ bool instructionFactory::is_format_j(const std::vector<std::string>& tokens){
 
 int instructionFactory::regtag_to_int(std::string regtag){
 	if(regtag[0] != 'x'){
-		regtag = configurator.get_register_number(regtag);
+		regtag = configurator::get_register_number(regtag);
 	}
 	return std::stoi(regtag.substr(1, regtag.size() - 1));
 }
@@ -195,15 +198,15 @@ int instructionFactory::string_to_int(const std::string& input){
 	int num = ( 1 - 2 * startInd ) * std::stoi(input.substr(startInd, input.size() - startInd), nullptr, 0);
 	return num;
 }
-instruction* parse(std::string line){
+instruction* instructionFactory::parse(std::string line){
 	auto tokens = tokenate(line);
-	if(tokens.size() != 3 || tokens.size() != 4){
+	if(tokens.size() != 3 && tokens.size() != 4){
 		throw std::runtime_error("syntax error not valid emounts of tokens for instruction");
 	}
 
 	instruction* parsedInst = nullptr;
 	std::string& instToken = tokens[0];
-	auto Type = configurator.get_type(instToken);
+	auto Type = configurator::get_instruction_type(instToken);
 
 	switch(Type){
 		case R:
@@ -271,7 +274,7 @@ instruction* parse(std::string line){
 			break;
 		}
 	}
-	if(parsedInst = nullptr){
+	if(parsedInst == nullptr){
 		//logic error must be chekced in the next version
 	}
 	return parsedInst;

@@ -3,6 +3,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 class encoder {
 	private:
@@ -13,7 +14,7 @@ class encoder {
 		void encode_stype(const std::string&, const int, const int, const int);
 		void encode_btype(const std::string&, const int, const int, const int);
 		void encode_utype(const std::string&, const int, const int);
-		void encode_jtype(const std::string&, const int);
+		void encode_jtype(const std::string&, const int, const int);
 };
 
 #endif

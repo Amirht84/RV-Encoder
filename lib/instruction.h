@@ -43,7 +43,7 @@ class itype : public instruction {
 			const int rs,
 			const int imm12b
 		     ):
-			_isnt(inst),
+			_inst(inst),
 			_rd(rd),
 			_rs(rs),
 			_imm12b(imm12b) {}
@@ -58,15 +58,15 @@ class stype : public instruction {
 		const int _imm12b;
 	public:
 		stype(
-			const std::strign& inst,
+			const std::string& inst,
 			const int rs1,
 			const int rs2,
-			const int _imm12b
+			const int imm12b
 		     ):
 			_inst(inst),
 			_rs1(rs1),
 			_rs2(rs2),
-			_imm12b(imm12b) {}
+			_imm12b(imm12b){}
 		void encode (encoder&) override;
 };
 
@@ -113,14 +113,14 @@ class jtype : public instruction {
 		const int _rd;
 		const int _imm20b;
 	public:
-		utype(
+		jtype(
 			const std::string& inst,
 			const int rd,
 			const int imm20b
 		     ):
 			_inst(inst),
 			_rd(rd),
-			_imm20b(imm20) {}
+			_imm20b(imm20b) {}
 
 		void encode (encoder&) override;
 };

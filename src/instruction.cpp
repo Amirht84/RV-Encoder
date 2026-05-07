@@ -1,8 +1,9 @@
 #include "instruction.h"
 #include "encoder.h"
+#include <iostream>
 
 void rtype::encode(encoder& Encoder){
-	std::cout << _inst << " " << _rd << " " << _rs1 << " " << _rs2 '\n';
+	std::cout << _inst << " " << _rd << " " << _rs1 << " " << _rs2 << '\n';
 //	Encoder.encode_rtype(_inst, _rd, _rs1, _rs2);
 	return;
 }
