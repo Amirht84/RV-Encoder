@@ -23,7 +23,7 @@ class rtype : public instruction {
 			const int rs1,
 			const int rs2
 		     ):
-			_inst(inst) 
+			_inst(inst), 
 			_rd(rd),
 			_rs1(rs1),
 			_rs2(rs2) {}
