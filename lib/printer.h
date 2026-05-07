@@ -1,6 +1,7 @@
 #ifndef __PRINTER__
 #define __PRINTER__
-
+#include <vector>
+#include <string>
 class printer{
 	private:
 		static std::vector<std::string> paper;

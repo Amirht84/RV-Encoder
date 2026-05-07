@@ -34,10 +34,6 @@ std::vector<std::string> instructionFactory::tokenate(std::string line){
 			}
 		}
 	}
-	for(int i = 0 ; i < tokens.size() ; ++i){
-		std::cerr << tokens[i] << "|";
-	}
-	std::cerr << '\n';
 	if(tokens.size() > 4) throw std::runtime_error("each instruction must contain at most 4 tokens");
 	return tokens;
 }

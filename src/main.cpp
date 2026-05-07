@@ -3,7 +3,7 @@
 #include "configurator.h"
 #include "instruction.h"
 #include <iostream>
-
+#include "printer.h"
 int main(){
 	instructionFactory InstructionFactory;
 	encoder Encoder;
@@ -17,4 +17,5 @@ int main(){
 		auto inst = InstructionFactory.parse(line);
 		inst->encode(Encoder);
 	}
+	printer::flush();
 }

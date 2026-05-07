@@ -2,6 +2,7 @@
 #include "configurator.h"
 #include "printer.h"
 #include <bitset>
+#include <iostream>
 
 std::string encoder::shufler(const std::string& input, const std::vector<std::string>& codes){
 	auto decode_bracket = [](const std::string& bracket) -> std::pair<int, int> {
@@ -20,7 +21,7 @@ std::string encoder::shufler(const std::string& input, const std::vector<std::st
 		return size - 1 - bitIndex;
 	};
 	
-	std::string shufled;
+	std::string shufled = "";
 
 	for(auto& code : codes){
 		if(code[0] == '['){
@@ -76,7 +77,7 @@ void encoder::encode_btype(const std::string& inst, const int rs1, const int rs2
 	auto OP = std::bitset<7>(CodeArray[0]).to_string();
 	auto F3 = std::bitset<3>(CodeArray[1]).to_string();
 
-	printer::add_line( shufler(IMM12B, {"12", "[10:5]"})+ RS2+ RS1+ F3+ shufler(IMM12B, {"[4:1], 11"})+ OP);
+	printer::add_line( shufler(IMM12B, {"12", "[10:5]"})+ RS2+ RS1+ F3+ shufler(IMM12B, {"[4:1]", "11"})+ OP);
 }
 void encoder::encode_utype(const std::string& inst, const int rd, const int imm20b){
 	auto RD = std::bitset<5>(rd).to_string();
