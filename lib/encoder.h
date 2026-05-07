@@ -6,7 +6,6 @@
 
 class encoder {
 	private:
-		std::string& get_stringed_bit(const int);
 		std::string shufler(const std::string&, const std::vector<std::string>&);
 	public:
 		void encode_rtype(const std::string&, const int, const int, const int);

@@ -1,4 +1,5 @@
 #include "encoder.h"
+#include "configurator.h"
 #include <bitset>
 
 std::string encoder::shufler(const std::string& input, const std::vector<std::string>& codes){
@@ -38,7 +39,7 @@ void encoder::encode_rtype(const std::string& inst, const int rd, const int rs1,
 	auto RD  = std::bitset<5>(rd).to_string();
 	auto RS1 = std::bitset<5>(rs1).to_string();
 	auto RS2 = std::bitset<5>(rs2).to_string();
-	auto CodeArray = InstructionHolder[inst]; //contains op, func3, func7 in order
+	auto CodeArray = configurator.get_opcode(inst); //contains op, func3, func7 in order
 	auto OP = std::bitset<7>(CodeArray[0]).to_string();
 	auto F3 = std::bitset<3>(CodeArray[1]).to_string();
 	auto F7 = std::bitset<7>(CodeArray[2]).to_string();
@@ -49,7 +50,7 @@ void encoder::encode_itype(const std::string& inst, const int rd, const int rs, 
 	auto RD = std::bitset<5>(rd).to_string();
 	auto RS = std::bitset<5>(rs).to_string();
 	auto IMM12B = std::bitset<12>(imm12b).to_string();
-	auto CodeArray = InstructionHolder[inst];
+	auto CodeArray = configurator.get_opcode(inst);
 	auto OP = std::bitset<7>(CodeArray[0]).to_string();
 	auto F3 = std::bitset<3>(CodeArray[1]).to_string();
 
@@ -60,7 +61,7 @@ void encoder::encode_stype(const std::string& inst, const int rs1, const int rs2
 	auto RS1 = std::bitset<5>(rs1).to_string();
 	auto RS2 = std::bitset<5>(rs2).to_string();
 	auto IMM12B = std::bitset<12>(imm12b).to_string();
-	auto CodeArray = InstructionHolder[inst];
+	auto CodeArray = configurator.get_opcode(inst);
 	auto OP = std::bitset<7>(CodeArray[0]).to_string();
 	auto F3 = std::bitset<3>(CodeArray[1]).to_string();
 
@@ -70,7 +71,7 @@ void encoder::encode_btype(const std::string& inst, const int rs1, const int rs2
 	auto RS1 = std::bitset<5>(rs1).to_string();
 	auto RS2 = std::bitset<5>(rs2).to_string();
 	auto IMM12B = std::bitset<13>(imm12b).to_string();
-	auto CodeArray = InstructionHolder[inst];
+	auto CodeArray = configurator.get_opcode(inst);
 	auto OP = std::bitset<7>(CodeArray[0]).to_string();
 	auto F3 = std::bitset<3>(CodeArray[1]).to_string();
 
@@ -79,7 +80,7 @@ void encoder::encode_btype(const std::string& inst, const int rs1, const int rs2
 void encoder::encode_utype(const std::string& inst, const int rd, const int imm20b){
 	auto RD = std::bitset<5>(rd).to_string();
 	auto IMM20B = std::bitset<20>(imm20b).to_string();
-	auto CodeArray = InstructionHolder[inst];
+	auto CodeArray = configurator.get_opcode(inst);
 	auto OP = std::bitset<7>(CodeArray[0]).to_string();
 
 	printer.add_line(IMM20B + RD + OP);
@@ -87,7 +88,7 @@ void encoder::encode_utype(const std::string& inst, const int rd, const int imm2
 void encoder::encode_jtype(const std::string& inst, const int rd, const int imm20b){
 	auto RD = std::bitset<5>(rd).to_string();
 	auto IMM20B = std::bitset<21>(imm20b).to_string();
-	auto CodeArray = InstructionHolder[inst];
+	auto CodeArray = configurator.get_opcode(inst);
 	auto OP = std::bitset<7>(CodeArray[0]).to_string();
 
 	printer.add_line(shufler(IMM20B, {"20", "[10:1]", "11", "[19:12]"}) + RD + OP);
