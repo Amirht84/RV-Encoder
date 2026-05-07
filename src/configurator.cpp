@@ -153,5 +153,18 @@ static std::string get_register_number(const std::string& reg) const {
 	}
 	return RegMap[reg];
 }
-
+static bool is_register(const std::string& reg) const {
+	if(reg[0] == 'x'){
+		for(int i = 1; i < reg.size() ; ++i){
+			if(!isdigit(reg[i])){
+				return false;
+			}
+		}
+		return true;
+	}
+	if(RegMap.find(reg) != RegMap.end()){
+		return true;
+	}
+	return false;
+}
 

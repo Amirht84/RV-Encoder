@@ -26,6 +26,7 @@ class configurator {
 		static std::array<int, 3> get_opcode(const std::string&) const ;
 		static type get_instruction_type(const std::string&) const ;
 		static std::string get_register_number(const std::string&)const ;
+		static bool is_register(const std::string&) const ;
 };
 
 #endif
