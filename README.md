@@ -17,5 +17,5 @@ Designed by [Amir](https://github.com/Amirht84) — collaborations are welcome.
 > - To assemble your code, pipe the output of cat to encoder.out and redirect the result to a file. (e.g., `cat Assembly.txt | ./encoder.out > MachineCode.txt`), better user interfaces will be developed soon...
 > - The `Makefile` is designed **only for Linux**. If you want to use this encoder on Windows, you will need to build it manually. :>
 > - The encoder only supports instructions listed in `opcode_table.csv`. To extend functionality, update the CSV file.
-> - For base+offset instructions like `sw s0, -6(s3)`, the offset+parentheses+base-register **must** be written **without any spaces** (e.g., `-6(s3)`). Otherwise, the encoder will fail to parse the input.
+> - For base+offset instructions like `sw s0, -6(s3)`, the offset+parentheses+base-register **must** be written **without any spaces, commas, or tabs** (e.g., `-6(s3)`). Otherwise, the encoder will fail to parse the input.
 > - This tool is **not suitable** for complex assembly code with pseudo-instructions or labels. It only encodes instructions line by line.
