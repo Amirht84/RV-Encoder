@@ -7,10 +7,10 @@
 #include "type.h"
 
 struct instructionInfo {
-	int op;
-	int func3;
-	int func7;
-	type Type;
+	int _Op;
+	int _Func3;
+	int _Func7;
+	type _Type;
 };
 
 class configurator {

@@ -4,7 +4,7 @@
 #include <string>
 class printer{
 	private:
-		static std::vector<std::string> paper;
+		static std::vector<std::string> Paper;
 	public:
 		static void add_line(const std::string&);
 		static void flush();
