@@ -39,12 +39,12 @@ std::vector<std::string> instructionFactory::tokenate(std::string Line){
 }
 
 bool instructionFactory::is_hex(const std::string& Input){
-	int StartInd = (Input[0] == '-') ? 1 : 0;
+	size_t StartInd = (Input[0] == '-') ? 1 : 0;
 	if(Input.substr(StartInd, 2) == "0x" || Input.substr(0, 2) == "0X"){
 		if(StartInd + 2 == Input.size()){
 			return false;
 		}
-		for(int i = StartInd + 2 ; i < Input.size() ; ++i){
+		for(size_t i = StartInd + 2 ; i < Input.size() ; ++i){
 			if(!isxdigit(Input[i])){
 				return false;
 			}
@@ -56,7 +56,7 @@ bool instructionFactory::is_hex(const std::string& Input){
 
 bool instructionFactory::is_dec(const std::string& Input){
 	int StartInd = (Input[0] == '-') ? 1 : 0;
-	for(int i = StartInd ; i < Input.size() ; ++i){
+	for(size_t i = StartInd ; i < Input.size() ; ++i){
 		if(!isdigit(Input[i])){
 			return false;
 		}

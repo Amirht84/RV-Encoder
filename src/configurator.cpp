@@ -168,14 +168,14 @@ std::array<int, 3> configurator::get_opcode(const std::string& Ints) {
 	if(InstMap.find(Ints) == InstMap.end()){
 		throw std::runtime_error("syntax error or instruction not available in configuration File");
 	}
-	auto& [Op, Func3, Func7, _] = InstMap[Ints];
+	auto& [Op, Func3, Func7, _1] = InstMap[Ints];
 	return {Op, Func3, Func7};
 }
 type configurator::get_instruction_type(const std::string& Ints) {
 	if(InstMap.find(Ints) == InstMap.end()){
 		throw std::runtime_error("syntax error or instruction not available in configuration File");
 	}
-	auto [_, _, _, Type] = InstMap[Ints];
+	auto [_1, _2, _3, Type] = InstMap[Ints];
 	return Type;
 }
 std::string configurator::get_register_number(const std::string& reg) {
@@ -185,8 +185,8 @@ std::string configurator::get_register_number(const std::string& reg) {
 	return RegMap[reg];
 }
 bool configurator::is_reg(const std::string& Reg) {
-	if(reg[0] == 'x'){
-		for(int i = 1; i < Reg.size() ; ++i){
+	if(Reg[0] == 'x'){
+		for(size_t i = 1; i < Reg.size() ; ++i){
 			if(!isdigit(Reg[i])){
 				return false;
 			}

@@ -8,7 +8,7 @@ std::string encoder::shufler(const std::string& Input, const std::vector<std::st
 	auto decode_bracket = [](const std::string& Bracket) -> std::pair<int, int> {
 		int FirstNumber;
 		int SecondNumber;
-		for(int i = 1 ; i < Bracket.size() ; ++i){
+		for(size_t i = 1 ; i < Bracket.size() ; ++i){
 			if(Bracket[i] == ':'){
 				FirstNumber = std::stoi(Bracket.substr(1, i - 1));
 				SecondNumber = std::stoi(Bracket.substr(i + 1, Bracket.size() - i - 2));

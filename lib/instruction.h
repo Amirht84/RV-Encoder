@@ -12,18 +12,18 @@ class instruction {
 
 class rtype : public instruction {
 	protected:
-		const std::string _inst;
+		const std::string _Inst;
 		const int _Rd;
 		const int _Rs1;
 		const int _Rs2;
 	public:
 		rtype(
-			const std::string& inst,
+			const std::string& Inst,
 			const int Rd,
 			const int Rs1,
 			const int Rs2
 		     ):
-			_inst(inst), 
+			_Inst(Inst), 
 			_Rd(Rd),
 			_Rs1(Rs1),
 			_Rs2(Rs2) {}
@@ -32,38 +32,38 @@ class rtype : public instruction {
 
 class itype : public instruction {
 	private:
-		const std::string _inst;
+		const std::string _Inst;
 		const int _Rd;
-		const int _rs;
+		const int _Rs;
 		const int _Imm12b;
 	public:
 		itype(
-			const std::string& inst,
+			const std::string& Inst,
 			const int Rd,
-			const int rs,
+			const int Rs,
 			const int Imm12b
 		     ):
-			_inst(inst),
+			_Inst(Inst),
 			_Rd(Rd),
-			_rs(rs),
+			_Rs(Rs),
 			_Imm12b(Imm12b) {}
 		void encode (encoder&) override;
 };
 
 class stype : public instruction {
 	private:
-		const std::string _inst;
+		const std::string _Inst;
 		const int _Rs1;
 		const int _Rs2;
 		const int _Imm12b;
 	public:
 		stype(
-			const std::string& inst,
+			const std::string& Inst,
 			const int Rs1,
 			const int Rs2,
 			const int Imm12b
 		     ):
-			_inst(inst),
+			_Inst(Inst),
 			_Rs1(Rs1),
 			_Rs2(Rs2),
 			_Imm12b(Imm12b){}
@@ -72,18 +72,18 @@ class stype : public instruction {
 
 class btype : public instruction {
 	private:
-		const std::string _inst;
+		const std::string _Inst;
 		const int _Rs1;
 		const int _Rs2;
 		const int _Imm12b;
 	public:
 		btype(
-			const std::string& inst,
+			const std::string& Inst,
 			const int Rs1,
 			const int Rs2,
 			const int Imm12b
 		     ):
-			_inst(inst),
+			_Inst(Inst),
 			_Rs1(Rs1),
 			_Rs2(Rs2),
 			_Imm12b(Imm12b) {}
@@ -92,16 +92,16 @@ class btype : public instruction {
 
 class utype : public instruction {
 	private:
-		const std::string _inst;
+		const std::string _Inst;
 		const int _Rd;
 		const int _Imm20b;
 	public:
 		utype(
-			const std::string& inst,
+			const std::string& Inst,
 			const int Rd,
 			const int Imm20b
 		     ):
-			_inst(inst),
+			_Inst(Inst),
 			_Rd(Rd),
 			_Imm20b(Imm20b) {}
 		void encode (encoder&) override;
@@ -109,16 +109,16 @@ class utype : public instruction {
 
 class jtype : public instruction {
 	private:
-		const std::string _inst;
+		const std::string _Inst;
 		const int _Rd;
 		const int _Imm20b;
 	public:
 		jtype(
-			const std::string& inst,
+			const std::string& Inst,
 			const int Rd,
 			const int Imm20b
 		     ):
-			_inst(inst),
+			_Inst(Inst),
 			_Rd(Rd),
 			_Imm20b(Imm20b) {}
 
